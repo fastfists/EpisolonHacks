@@ -1,6 +1,6 @@
 from flask import Flask
 from src import test, user, home
-from src.ext import db, migrate, bcrypt, ma, jwt
+from src.ext import *
 
 def create_app(config_object='src.settings'):
 
@@ -26,6 +26,7 @@ def init_extensions(app, db):
     migrate.init_app(app, db)
     ma.init_app(app)
     jwt.init_app(app)
+    cors.init_app(app)
 
 
 if __name__ == '__main__':

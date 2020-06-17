@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, abort
 from .auth import create_token, get_user
-from .models import Student, Teacher
+from .models import Student, Teacher, Class
 from .schemas import StudentSchema, TeacherSchema, LoginSchema
 from src.ext import bcrypt, db
 from slugify import slugify
@@ -65,9 +65,23 @@ def getUser(classification, token):
 
     return jsonify(schema.dump(get_user()))
 
-@user_bp.route("/api/class/join/<string:code>")
+@user_bp.route("/api/student/join/<string:code>")
 @jwt_required
 def joinClass(code):
 
-    return "hi"
+    user = get_user()
+    
+    newClass = Class.query.filter_by(joinCode=code)
+
+    user.classes.append(newClass)
+    return jsonify({ "status": "Success" })
+
+@user_bp.route("/api/teacher/createClass/<string:code>", methods=["POST"])
+@jwt_required
+def createClass(code):
+    
+    user = get_user()
+    newClass = Class(name=request.json.get("name"))
+    user.classes.append(newClass)
+    return abort(403)
 
