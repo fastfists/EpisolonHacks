@@ -13,5 +13,5 @@ def get_user():
     elif token[0:3].lower() == "tea":
         model = Teacher
 
-    return model.get(int(token[3:]))
+    return model.query.get(int(token[3:]))
 

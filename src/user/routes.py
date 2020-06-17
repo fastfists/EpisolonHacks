@@ -4,22 +4,20 @@ from .models import Student, Teacher
 from .schemas import StudentSchema, TeacherSchema, LoginSchema
 from src.ext import bcrypt, db
 from slugify import slugify
-from sqlalchemy import or_
+from flask_jwt_extended import jwt_required
 
 user_bp = Blueprint('user', __name__)
 
-@user_bp.route("/api/<string:classification>/<string:slug>")
-def get(classification, slug): 
 
+@user_bp.route("/api/<string:classification>/<string:token>")
+@jwt_required
+def get(classification, token): 
     if classification.lower() == "teacher":
-        schema = TeacherSchema
-        model = Teacher
-
+        schema = TeacherSchema()
     elif classification.lower() == "student":
-        schema = StudentSchema
-        model = Student
-
-    return schema().dump(model.query.filter_by(slug=slug).first_or_404())
+        schema = StudentSchema()
+    
+    return jsonify(schema.dump(get_user()))
 
 @user_bp.route("/api/<string:classification>/register", methods=["POST"])
 def register(classification): 
