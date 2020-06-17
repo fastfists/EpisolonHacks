@@ -55,7 +55,7 @@ def login(classification):
     if user and bcrypt.check_password_hash(user.password, body["password"]):
         access_token = create_token(user.id, classification)
         return jsonify(access_token=access_token)
-    return jsonify({ "status": "Error", "message": "Wrong username or password" })
+    return jsonify({ "status": "Error", "msg": "Wrong username or password" })
 
 @user_bp.route("/api/<string:classification>/<string:token>")
 @jwt_required
