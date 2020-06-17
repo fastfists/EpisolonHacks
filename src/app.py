@@ -1,5 +1,5 @@
 from flask import Flask
-from src import user, home, test
+from src import test, user, home
 from src.ext import db, migrate, bcrypt, ma
 
 def create_app(config_object='src.settings'):
@@ -7,7 +7,7 @@ def create_app(config_object='src.settings'):
 
     app = Flask(__name__)
     app.config.from_object(config_object)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ycjhowiv:il_SSZ6oD47EEf2diqvorCMY9_W0Nrho@ruby.db.elephantsql.com:5432/ycjhowiv'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ojxbdixq:Q5m9i8FF-E-qh8L30qQZeiy2PuOmat8Y@ruby.db.elephantsql.com:5432/ojxbdixq'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     init_modules(app)
@@ -18,15 +18,13 @@ def create_app(config_object='src.settings'):
 
 def init_modules(app):
 
+    test.init_app(app)
     user.init_app(app)
     home.init_app(app)
 
-
-    test.init_app(app)
-
-
 def init_extensions(app, db):
     db.init_app(app)
+    db.app = app
     bcrypt.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)

@@ -10,7 +10,7 @@ class Teacher(db.Model):
     email = Column(String)
     password = Column(String(256))
     username = Column(String, unique=True)
-    slug = Column(String, index= True)
+    slug = Column(String, index= True, unique=True)
 
     classes = relationship("Class", backref = "teacher" )
 
@@ -38,7 +38,7 @@ class Student(db.Model):
     username = Column(String, unique=True)
     slug = Column(String, index= True)
 
-    tests = relationship('SubmittedTest', 
     classes = relationship('Class', secondary=student_class, backref=db.backref('students', lazy='dynamic'))
+    tests = relationship('SubmittedTest', backref='student')
 
 

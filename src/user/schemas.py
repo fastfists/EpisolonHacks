@@ -6,8 +6,13 @@ class StudentSchema(ma.SQLAlchemyAutoSchema):
 
     class Meta:
         model = Student
+        load_instance = True
+        
 
 class TeacherSchema(ma.SQLAlchemyAutoSchema):
 
     class Meta:
         model = Teacher
+        load_instance = True
+
+
