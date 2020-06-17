@@ -1,5 +1,5 @@
 from flask import Flask
-from src import user, home
+from src import user, home, test
 from src.ext import db, migrate, bcrypt, ma
 
 def create_app(config_object='src.settings'):
@@ -20,6 +20,9 @@ def init_modules(app):
 
     user.init_app(app)
     home.init_app(app)
+
+
+    test.init_app(app)
 
 
 def init_extensions(app, db):

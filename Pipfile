@@ -17,6 +17,7 @@ marshmallow-sqlalchemy = "*"
 gunicorn = "*"
 python-slugify = "*"
 psycopg2 = "*"
+flask-wtf = "*"
 
 [requires]
 python_version = "*"
