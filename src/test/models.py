@@ -1,68 +1,69 @@
 from src.ext import db
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, Float
 from sqlalchemy.schema import Table
 from sqlalchemy.orm import relationship
 
 
 ##############################################################
 
-class Test(db.Model):
+class SubmittedTest(db.Model):
 
     id = Column(Integer, primary_key=True)
 
+    student_id = Column(Integer, db.ForeignKey('student.id'))
+    questions = relationship('SubmittedQuestion', backref='test')
 
-# class SubmittedTest(Test):
+class EmptyTest(db.Model):
 
-#     student_id = Column(Integer, db.ForeignKey('student.id'))
-#     questions = relationship('SubmittedQuestion', backref='test')
+    id = Column(Integer, primary_key=True)
 
-# class EmptyTest(Test):
-
-#     questions = relationship('EmptyQuestion', backref='test')
+    questions = relationship('EmptyQuestion', backref='test')
 
 ##############################################################
 
-class Question(db.Model): 
+class EmptyQuestion(db.Model): 
 
     id = Column(Integer, primary_key=True)
-    test_id = Column(Integer, db.ForeignKey('test.id'))
-    answers = relationship('Answer', backref='question')
+
+    points = Column(Float)
+
     questionString = Column(String)
+    test_id = Column(Integer, db.ForeignKey('emptytest.id'))
+    answers = relationship('EmptyAnswer', backref='question')
 
+class SubmittedQuestion(db.Model): 
 
-# class EmptyQuestion(Question): 
+    id = Column(Integer, primary_key=True)
 
-#     id = Column(Integer, primary_key=True)
-#     test_id = Column(Integer, db.ForeignKey('emptytest.id'))
-#     answers = relationship('EmptyAnswer', backref='question')
-
-# class SubmittedQuestion(Question): 
-
-#     id = Column(Integer, primary_key=True)
-#     test_id = Column(Integer, db.ForeignKey('submittedtest.id'))
-#     answers = relationship('SubmittedAnswer', backref='question')
+    points = Column(Float)
+    
+    questionString = Column(String)
+    test_id = Column(Integer, db.ForeignKey('submittedtest.id'))
+    answers = relationship('SubmittedAnswer', backref='question')
 
 
 ##############################################################
 
-class Answer(db.Model):
+class SubmittedAnswer(db.Model):
 
     id = Column(Integer, primary_key=True)
     answerString = Column(String)
-   
     is_correct = Column(Boolean, nullable=False)
 
-# class SubmittedAnswer(Answer):
+    is_chosen = Column(Boolean, nullable=False, default=True)
 
-#     id = Column(Integer, primary_key=True)
-   
-#     question_id = Column(Integer, db.ForeignKey('submittedquestion.id'))
+    question_id = Column(Integer, db.ForeignKey('submittedquestion.id'))
 
 
-# class EmptyAnswer(Answer):
+class EmptyAnswer(db.Model):
 
-#     id = Column(Integer, primary_key=True)
-   
-#     question_id = Column(Integer, db.ForeignKey('emptyquestion.id'))
+    id = Column(Integer, primary_key=True)
+    answerString = Column(String)
+    is_correct = Column(Boolean, nullable=False)
+
+    question_id = Column(Integer, db.ForeignKey('emptyquestion.id'))
 
 ##############################################################
+
+
+

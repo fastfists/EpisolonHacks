@@ -3,17 +3,17 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.schema import Table
 from sqlalchemy.orm import relationship
 
-
 class Teacher(db.Model):
 
     id = Column(Integer, primary_key=True)
 
+    email = Column(String)
+    password = Column(String(256))
     username = Column(String, unique=True)
     slug = Column(String, index= True)
-    email = Column(String)
-    passowrd = Column(String(256))
 
-    students = relationship("Student", backref = "teacher" )
+    classes = relationship("Class", backref = "teacher" )
+
 
 # maps students to classes
 student_class = db.Table('student_class',
@@ -27,17 +27,18 @@ class Class(db.Model):
 
     name = Column(String)
     joinCode = Column(String(8))
+    teacher_id = Column(Integer, db.ForeignKey('teacher.id'))
 
 class Student(db.Model):
 
     id = Column(Integer, primary_key=True)
 
+    email = Column(String)
+    password = Column(String(256))
     username = Column(String, unique=True)
     slug = Column(String, index= True)
-    email = Column(String)
-    passowrd = Column(String(256))
 
+    tests = relationship('SubmittedTest', 
     classes = relationship('Class', secondary=student_class, backref=db.backref('students', lazy='dynamic'))
 
-    teacher_id = Column(Integer, db.ForeignKey("teacher.id"))
 
