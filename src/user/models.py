@@ -26,7 +26,7 @@ class Class(db.Model):
     id = Column(Integer, primary_key=True)
 
     name = Column(String)
-    joinCode = Column(String(8))
+    joinCode = Column(String(8), unique=True)
     teacher_id = Column(Integer, db.ForeignKey('teacher.id'))
 
 class Student(db.Model):
