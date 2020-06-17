@@ -7,10 +7,10 @@ class Teacher(db.Model):
 
     id = Column(Integer, primary_key=True)
 
-    email = Column(String)
+    email = Column(String, unique=True)
     password = Column(String(256))
     username = Column(String, unique=True)
-    slug = Column(String, index= True, unique=True)
+    slug = Column(String, index= True)
 
     classes = relationship("Class", backref = "teacher" )
 
@@ -33,7 +33,7 @@ class Student(db.Model):
 
     id = Column(Integer, primary_key=True)
 
-    email = Column(String)
+    email = Column(String, unique=True)
     password = Column(String(256))
     username = Column(String, unique=True)
     slug = Column(String, index= True)

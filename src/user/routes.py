@@ -35,8 +35,10 @@ def register(classification):
     user.slug = slugify(user.username)
     
     if model.query.filter_by(slug=user.slug).first():
-        # TODO Handle this
-        return 
+        return jsonify({"status" : "Error", "msg" : "Username already exists"})
+
+    if model.query.filter_by(email=user.email).first():
+        return jsonify({"status" : "Error", "msg" : "Email"})
 
     db.session.add(user)
     db.session.commit()
