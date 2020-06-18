@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify, abort
-from .auth import create_token, get_user
+from .auth import create_token, get_user, get_teacher, get_student
 from .models import Student, Teacher, Class
-from .schemas import StudentSchema, TeacherSchema, LoginSchema
+from .schemas import StudentSchema, TeacherSchema, LoginSchema, ClassSchema
 from src.ext import bcrypt, db
 from slugify import slugify
 from flask_jwt_extended import jwt_required
@@ -47,7 +47,6 @@ def login(classification):
 
     schema = LoginSchema()
     body = schema.load(request.form)
-    print(body)
 
     model, _ = getObjects(classification)
     
@@ -57,12 +56,13 @@ def login(classification):
         return jsonify(access_token=access_token)
     return jsonify({ "status": "Error", "msg": "Wrong username or password" })
 
-@user_bp.route("/api/<string:classification>/<string:token>")
+@user_bp.route("/api/<string:classification>")
 @jwt_required
-def getUser(classification, token): 
+def getUser(classification): 
     
     _, schema = getObjects(classification)
 
+    print(get_user())
     return jsonify(schema.dump(get_user()))
 
 @user_bp.route("/api/student/join/<string:code>")
@@ -74,14 +74,32 @@ def joinClass(code):
     newClass = Class.query.filter_by(joinCode=code)
 
     user.classes.append(newClass)
+
+    db.session.commit()
     return jsonify({ "status": "Success" })
 
-@user_bp.route("/api/teacher/createClass/<string:code>", methods=["POST"])
+@user_bp.route("/api/teacher/class", methods=["POST"])
 @jwt_required
-def createClass(code):
+def createClass():
+    
+    teacher = get_teacher()
+    newClass = Class(name=request.json.get("name"))
+    teacher.classes.append(newClass)
+
+    db.session.add(newClass)
+    db.session.commit()
+
+    return jsonify({ "yes" : "yes"})
+
+
+@user_bp.route("/api/<string:classification>/classes/")
+@jwt_required
+def getClasses(classification): 
     
     user = get_user()
-    newClass = Class(name=request.json.get("name"))
-    user.classes.append(newClass)
-    return abort(403)
+
+    schema = ClassSchema(many=True)
+
+    return jsonify(schema.dump( user.classes))
+
 

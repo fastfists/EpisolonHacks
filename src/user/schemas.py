@@ -1,5 +1,5 @@
 from src.ext import ma
-from .models import Student, Teacher
+from .models import Student, Teacher, Class
 from marshmallow import fields, Schema
 
 class StudentSchema(ma.SQLAlchemyAutoSchema):
@@ -12,6 +12,12 @@ class TeacherSchema(ma.SQLAlchemyAutoSchema):
 
     class Meta:
         model = Teacher
+        load_instance = True
+
+class ClassSchema(ma.SQLAlchemyAutoSchema):
+
+    class Meta:
+        model = Class
         load_instance = True
 
 class LoginSchema(Schema):
