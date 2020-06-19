@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify, abort
+import random
 from .auth import create_token, get_user, get_teacher, get_student
 from .models import Student, Teacher, Class
 from .schemas import StudentSchema, TeacherSchema, LoginSchema, ClassSchema
@@ -7,6 +8,12 @@ from slugify import slugify
 from flask_jwt_extended import jwt_required
 
 user_bp = Blueprint('user', __name__)
+
+def make_join_code():
+
+    letters = "qwertyuiopgfdsalkjhmnzxcvb"
+    return ''.join( (random.choice(letters) for i in range(8)))
+
 
 def getObjects(classification):
 
@@ -71,7 +78,7 @@ def joinClass(code):
 
     user = get_user()
     
-    newClass = Class.query.filter_by(joinCode=code)
+    newClass = Class.query.filter_by(joinCode=code).first()
 
     user.classes.append(newClass)
 
@@ -83,13 +90,20 @@ def joinClass(code):
 def createClass():
     
     teacher = get_teacher()
+    schema = ClassSchema()
     newClass = Class(name=request.json.get("name"))
     teacher.classes.append(newClass)
 
+    join_code = make_join_code()
+    while True:
+        if not Class.query.filter_by(joinCode=join_code).first():
+            break
+
+    newClass.joinCode = join_code
     db.session.add(newClass)
     db.session.commit()
 
-    return jsonify({ "yes" : "yes"})
+    return jsonify(schema.dump(newClass))
 
 
 @user_bp.route("/api/<string:classification>/classes/")
